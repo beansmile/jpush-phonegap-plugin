@@ -28,9 +28,6 @@ l## JPush PhoneGap Plugin ##
 		
 		<meta-data android:name="JPUSH_APPKEY" android:value="your appkey"/>
 
-4. 打开`$JPUSH_PLUGIN_DIR/src/ios/PushConfig.plist`文件将文件中的`7d431e42dfa6a6d693ac2d04`替换为在Portal上注册该应用的的Key,例如（9fed5bcb7b9b87413678c407）
-		
-
 5. 在`$JPUSH_PLUGIN_DIR/src/android/JPushPlugin.java` 文件`import your.package.name.R`替换为在Portal上注册该应用的包名，例如(com.thi.pushtest)
 
 
@@ -38,6 +35,49 @@ l## JPush PhoneGap Plugin ##
 
 		cordova plugin add $JPUSH_PLUGIN_DIR
 		cordova plugin add org.apache.cordova.device
+
+7. iOS添加初始化JPush sdk代码 如果你要先部署android平台，可以先忽略这一步，当需要iOS 平台时，只加上这个步骤即可
+	
+	+ 用xcode 打开 Myproj下的iOS工程 
+	+ 打开xcode右边工程目录下`Resources/PushConfig.plist`
+		
+			在APP_KEY和CHANNLE字段 分别添加您的appkey和channle
+		
+	+ 打开xcode右边工程目录下`AppDelegate.m`,包含以下头文件
+
+			#import "APService.h"
+		    #import "JPushPlugin.h"
+
+	+ 在AppDelegate.m文件中，添加JPush SDK 提供的 API 来实现功能
+
+			- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions{
+			   //原内容保持不变
+			   //Required add 
+			   [JPushPlugin setLaunchOptions:launchOptions];
+			    return YES;
+			}
+			- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken   {
+			    //原内容保持不变
+			    // Required add
+			    [APService registerDeviceToken:deviceToken];
+			}
+			- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
+			    //原内容保持不变
+			    // Required
+			    [APService handleRemoteNotification:userInfo];
+	    		[[NSNotificationCenter defaultCenter] postNotificationName:kJPushPluginReceiveNotification
+	                                                               object:userInfo];
+			}
+			- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+
+			  // IOS 7 Support Required
+			  [APService handleRemoteNotification:userInfo];
+			  [[NSNotificationCenter defaultCenter] postNotificationName:kJPushPluginReceiveNotification
+	                                                              object:userInfo];
+
+			  completionHandler(UIBackgroundFetchResultNewData);
+			}
+
 	
 7. 在js中调用函数,初始化jpush sdk
 
@@ -100,12 +140,9 @@ l## JPush PhoneGap Plugin ##
 		window.plugins.jPushPlugin.setTagsWithAlias(tags,alias)
 		window.plugins.jPushPlugin.setTags(tags)
 		window.plugins.jPushPlugin.setAlias(alias)
-+ 获取点击通知内容
-		
-		event - jpush.openNotification
 + 获取通知内容
 		
-		event - jpush.receiveNotification
+		event - jpush.openNotification
 
 + 获取自定义消息推送内容
 
@@ -115,6 +152,9 @@ l## JPush PhoneGap Plugin ##
 [通用API详细说明](document/Common_detail_api.md)
 
 #### iOS API简介
++ 获取 APNs（通知） 推送内容
+
+		event - jpush.receiveNotification
 
 + 获取自定义消息推送内容
 
@@ -150,8 +190,9 @@ l## JPush PhoneGap Plugin ##
 + 获取集成日志
 		window.plugins.jPushPlugin.setDebugMode(mode)
 
-+ 接收推送消息和点击通知
++ 接收推送消息Receiver
 		
+		//推荐使用event jpush.Message和jpush.openNotification，
 		//下面这两个api 是兼容旧有的代码
 		window.plugins.jPushPlugin.receiveMessageInAndroidCallback(data)
 		window.plugins.jPushPlugin.openNotificationInAndroidCallback(data)

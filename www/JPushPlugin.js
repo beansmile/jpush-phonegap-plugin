@@ -6,7 +6,6 @@ var JPushPlugin = function(){
 
 JPushPlugin.prototype.receiveMessage={}
 JPushPlugin.prototype.openNotification={}
-JPushPlugin.prototype.receiveNotification={}
 
 
 JPushPlugin.prototype.isPlatformIOS = function(){
@@ -147,7 +146,7 @@ JPushPlugin.prototype.receiveMessageInAndroidCallback = function(data){
 	try{
 		console.log("JPushPlugin:receiveMessageInAndroidCallback");
 		var bToObj  = JSON.parse(data);
-		this.receiveMessage=bToObj
+		this.openNotification=bToObj
 		cordova.fireDocumentEvent('jpush.receiveMessage',null);
 		//console.log(data);
 		//var message  = bToObj.message;
@@ -168,33 +167,8 @@ JPushPlugin.prototype.openNotificationInAndroidCallback = function(data){
 	try{
 		console.log("JPushPlugin:openNotificationInAndroidCallback");
 		var bToObj  = JSON.parse(data);
-		this.openNotification=bToObj;	
-		cordova.fireDocumentEvent('jpush.openNotification',null);
-	
-		//console.log(data);
-		//var bToObj  = JSON.parse(data);
-		//var alert   = bToObj.alert;
-		//var extras  = bToObj.extras;
-		//console.log(alert);
-
-		//console.log(extras['cn.jpush.android.MSG_ID']);
-		//console.log(extras['app']);
-		//console.log(extras['cn.jpush.android.NOTIFICATION_CONTENT_TITLE']);
-		//console.log(extras['cn.jpush.android.EXTRA']);
-		//console.log(extras['cn.jpush.android.PUSH_ID']);
-		//console.log(extras['cn.jpush.android.NOTIFICATION_ID']);
-		//console.log("JPushPlugin:openNotificationCallback is ready");
-	}
-	catch(exception){               
-		console.log(exception);
-	}
-}
-JPushPlugin.prototype.receiveNotificationInAndroidCallback = function(data){
-	try{
-		console.log("JPushPlugin:receiveNotificationInAndroidCallback");
-		var bToObj  = JSON.parse(data);
 		this.receiveNotification=bToObj;	
-		cordova.fireDocumentEvent('jpush.receiveNotification',null);
+		cordova.fireDocumentEvent('jpush.openNotification',null);
 	
 		//console.log(data);
 		//var bToObj  = JSON.parse(data);

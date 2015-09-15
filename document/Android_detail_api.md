@@ -20,7 +20,7 @@
 	- false 不显示集成日志
 
 
-###  接收消息和点击通知事件
+###  接收推送消息Receiver
 #### API - receiveMessageInAndroidCallback
 
 用于android收到应用内消息的回调函数(请注意和通知的区别)，该函数不需要主动调用

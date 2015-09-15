@@ -19,7 +19,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.Map.Entry;
 
-import your.package.name.R;
+import com.schoolmatch.R;
 
 import cn.jpush.android.api.BasicPushNotificationBuilder;
 import cn.jpush.android.api.CustomPushNotificationBuilder;
@@ -58,8 +58,6 @@ public class JPushPlugin extends CordovaPlugin {
 
 	public static String notificationAlert;
 	public static Map<String, Object> notificationExtras=new HashMap<String, Object>();
-	public static String openNotificationAlert;
-	public static Map<String, Object> openNotificationExtras=new HashMap<String, Object>();
 
 	public JPushPlugin() {
 		instance = this;
@@ -69,16 +67,6 @@ public class JPushPlugin extends CordovaPlugin {
 	public void initialize(CordovaInterface cordova, CordovaWebView webView) {
 		super.initialize(cordova, webView);
 		//JPushInterface.setDebugMode(true);
-		
-		 //JPushPlugin.notificationAlert = alert;
-		 //JPushPlugin.notificationExtras = extras;
-		 if(JPushPlugin.openNotificationAlert != null){
-			 JPushPlugin.transmitOpen(JPushPlugin.openNotificationAlert, JPushPlugin.openNotificationExtras);
-		 }
-		 if(JPushPlugin.notificationAlert!=null){
-			 JPushPlugin.transmitReceive(JPushPlugin.notificationAlert, JPushPlugin.notificationExtras);
-		 }
-
 		//JPushInterface.init(cordova.getActivity().getApplicationContext());
 	}
 
@@ -183,34 +171,6 @@ public class JPushPlugin extends CordovaPlugin {
 
 		}
 	}
-	static void transmitReceive(String alert, Map<String, Object> extras) {
-		if (instance == null) {
-			return;
-		}
-		JSONObject data = openNotificationObject(alert, extras);
-		String js = String
-				.format("window.plugins.jPushPlugin.receiveNotificationInAndroidCallback('%s');",
-						data.toString());
-//		{"alert":"ding",
-//		"extras":{
-//			     "cn.jpush.android.MSG_ID":"1691785879",
-//			     "app":"com.thi.pushtest",
-//			     "cn.jpush.android.ALERT":"ding",
-//			     "cn.jpush.android.EXTRA":{},
-//			     "cn.jpush.android.PUSH_ID":"1691785879",
-//			     "cn.jpush.android.NOTIFICATION_ID":1691785879,
-//			     "cn.jpush.android.NOTIFICATION_TYPE":"0"}}
-		try {
-			
-			instance.webView.sendJavascript(js);
-
-		} catch (NullPointerException e) {
-
-		} catch (Exception e) {
-
-		}
-	}
-
 	@Override
 	public boolean execute(final String action, final JSONArray data,
 			final CallbackContext callbackContext) throws JSONException {

@@ -54,13 +54,16 @@
             }
             var onReceiveNotification = function(event){
                 try{
-                	var alert
-                    if(device.platform == "Android"){
-                  		 alert = window.plugins.jPushPlugin.receiveNotification.alert;
-                    }else{
-                         alert   = event.aps.alert;
+                    
+                    var eventContent="{";
+                    for(var key in event){
+                        if(key=="type"){
+                            break
+                        }
+                       eventContent+=key+":"+JSON.stringify(event[key])+"\n"
                     }
-                    $("#notificationResult").html(alert);
+                    eventContent+="}";
+                    $("#notificationResult").html(eventContent);
                     
                 }
                 catch(exeption){
@@ -69,15 +72,9 @@
             }
             var onReceiveMessage = function(event){
                 try{
-                
-                    var message
-                    if(device.platform == "Android"){
-                  		 message = window.plugins.jPushPlugin.receiveMessage.message;
-                    }else{
-                         message   = event.content;
-                    }                    
+                     var message = window.plugins.jPushPlugin.receiveMessage.message;
                      //var extras = window.plugins.jPushPlugin.extras
-    
+        
                      $("#messageResult").html(message);
                      
                 }
@@ -92,7 +89,7 @@
                     window.plugins.jPushPlugin.init();
                     window.plugins.jPushPlugin.getRegistrationID(onGetRegistradionID);
                     
-                    if(device.platform != "Android"){
+                    if(device.platform == "Android"){
                         window.plugins.jPushPlugin.setDebugModeFromIos();
                         window.plugins.jPushPlugin.setApplicationIconBadgeNumber(0);
                     }else{
